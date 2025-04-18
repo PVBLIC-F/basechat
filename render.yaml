@@ -1,0 +1,69 @@
+# Exported from Render on 2025-04-18T15:04:42Z
+databases:
+- name: ragie-basechat-database
+  databaseName: basechat_l466
+  user: basechat_l466_user
+  plan: basic-256mb
+  region: oregon
+  ipAllowList:
+  - source: 0.0.0.0/0
+    description: everywhere
+  postgresMajorVersion: "16"
+  diskSizeGB: 15
+services:
+- type: web
+  name: ragie-basechat-frontend
+  runtime: node
+  repo: https://github.com/cheadings71/basechat
+  plan: pro
+  envVars:
+  - key: STORAGE_REGION
+    sync: false
+  - key: STORAGE_SECRET_KEY
+    sync: false
+  - key: STORAGE_ACCESS_KEY
+    sync: false
+  - key: STORAGE_PREFIX
+    sync: false
+  - key: STORAGE_ENDPOINT
+    sync: false
+  - key: STORAGE_BUCKET
+    sync: false
+  - key: STORAGE_USE_SSL
+    sync: false
+  - key: GROQ_API_KEY
+    sync: false
+  - key: AUTH_GOOGLE_SECRET
+    sync: false
+  - key: AUTH_GOOGLE_ID
+    sync: false
+  - key: BETTER_AUTH_URL
+    sync: false
+  - key: RAGIE_API_KEY
+    sync: false
+  - key: OPENAI_API_KEY
+    sync: false
+  - key: NEXT_TELEMETRY_DISABLED
+    sync: false
+  - key: DATABASE_URL
+    fromDatabase:
+      name: ragie-basechat-database
+      property: connectionString
+  - key: BASE_URL
+    sync: false
+  - key: AUTH_DRIZZLE_URL
+    fromDatabase:
+      name: ragie-basechat-database
+      property: connectionString
+  - key: BETTER_AUTH_SECRET
+    sync: false
+  - key: RAGIE_WEBHOOK_SECRET
+    sync: false
+  - key: ANTHROPIC_API_KEY
+    sync: false
+  - key: PORT
+    sync: false
+  region: oregon
+  buildCommand: npm install && npm run build && npm run db:migrate
+  startCommand: npm start
+version: "1"
