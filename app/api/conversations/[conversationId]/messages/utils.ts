@@ -9,6 +9,12 @@ import Handlebars from "handlebars";
 
 import { createConversationMessageResponseSchema } from "@/lib/api";
 import { DEFAULT_GROUNDING_PROMPT, DEFAULT_SYSTEM_PROMPT, NAMING_SYSTEM_PROMPT } from "@/lib/constants";
+import { 
+  openaiWithHelicone, 
+  anthropicWithHelicone, 
+  groqWithHelicone, 
+  googleWithHelicone 
+} from "@/lib/helicone";
 import {
   DEFAULT_NAMING_MODEL,
   DEFAULT_MODEL,
@@ -17,12 +23,6 @@ import {
   LLMModel,
   SPECIAL_LLAMA_PROMPT,
 } from "@/lib/llm/types";
-import { 
-  openaiWithHelicone, 
-  anthropicWithHelicone, 
-  groqWithHelicone, 
-  googleWithHelicone 
-} from "@/lib/helicone";
 import { getRagieClient, getRagieSettingsByTenantId, getTenantRagieClient } from "@/lib/server/ragie";
 import {
   createConversationMessage,
