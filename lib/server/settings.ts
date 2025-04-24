@@ -25,6 +25,9 @@ export const GOOGLE_GENERATIVE_AI_API_KEY = process.env.GOOGLE_GENERATIVE_AI_API
 // assert(process.env.ANTHROPIC_API_KEY);
 export const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY!;
 
+// assert(process.env.HELICONE_API_KEY);
+export const HELICONE_API_KEY = process.env.HELICONE_API_KEY!;
+
 // assert(process.env.RAGIE_WEBHOOK_SECRET);
 export const RAGIE_WEBHOOK_SECRET = process.env.RAGIE_WEBHOOK_SECRET!;
 
