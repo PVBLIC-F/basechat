@@ -18,10 +18,13 @@ import { HELICONE_API_KEY } from "../server/settings";
  * @returns An OpenAI client configured with Helicone
  */
 export const openaiWithHelicone = (model: string) => {
+  // Use a more generic approach without specific type properties
   return openai(model, {
-    baseURL: "https://oai.helicone.ai/v1",
-    defaultHeaders: {
-      "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`,
+    configuration: {
+      baseURL: "https://oai.helicone.ai/v1",
+      defaultHeaders: {
+        "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`,
+      }
     }
   });
 };
@@ -33,9 +36,11 @@ export const openaiWithHelicone = (model: string) => {
  */
 export const anthropicWithHelicone = (model: string) => {
   return anthropic(model, {
-    baseURL: "https://anthropic.helicone.ai",
-    defaultHeaders: {
-      "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`,
+    configuration: {
+      baseURL: "https://anthropic.helicone.ai",
+      defaultHeaders: {
+        "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`,
+      }
     }
   });
 };
@@ -47,9 +52,11 @@ export const anthropicWithHelicone = (model: string) => {
  */
 export const groqWithHelicone = (model: string) => {
   return groq(model, {
-    baseURL: "https://groq.helicone.ai/openai/v1",
-    defaultHeaders: {
-      "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`,
+    configuration: {
+      baseURL: "https://groq.helicone.ai/openai/v1",
+      defaultHeaders: {
+        "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`,
+      }
     }
   });
 };
@@ -61,10 +68,12 @@ export const groqWithHelicone = (model: string) => {
  */
 export const googleWithHelicone = (model: string) => {
   return google(model, {
-    baseURL: "https://gateway.helicone.ai",
-    defaultHeaders: {
-      "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`,
-      "Helicone-Target-URL": "https://generativelanguage.googleapis.com"
+    configuration: {
+      baseURL: "https://gateway.helicone.ai",
+      defaultHeaders: {
+        "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`,
+        "Helicone-Target-URL": "https://generativelanguage.googleapis.com"
+      }
     }
   });
 };
