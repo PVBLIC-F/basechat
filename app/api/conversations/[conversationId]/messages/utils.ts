@@ -9,12 +9,6 @@ import Handlebars from "handlebars";
 
 import { createConversationMessageResponseSchema } from "@/lib/api";
 import { DEFAULT_GROUNDING_PROMPT, DEFAULT_SYSTEM_PROMPT, NAMING_SYSTEM_PROMPT } from "@/lib/constants";
-import { 
-  openaiWithHelicone, 
-  anthropicWithHelicone, 
-  groqWithHelicone, 
-  googleWithHelicone 
-} from "@/lib/helicone";
 import {
   DEFAULT_NAMING_MODEL,
   DEFAULT_MODEL,
@@ -95,23 +89,23 @@ export async function generate(tenantId: string, profileId: string, conversation
   let model;
   switch (provider) {
     case "openai":
-      model = openaiWithHelicone(context.model);
+      model = openai(context.model);
       break;
     case "google":
-      model = googleWithHelicone(context.model);
+      model = google(context.model);
       // google requires system messages to be ONLY in the beginning
       context.messages = [...systemMessages, ...nonSystemMessages];
       break;
     case "anthropic":
-      model = anthropicWithHelicone(context.model);
+      model = anthropic(context.model);
       // anthropic requires system messages to be ONLY in the beginning
       context.messages = [...systemMessages, ...nonSystemMessages];
       break;
     case "groq":
-      model = groqWithHelicone(context.model);
+      model = groq(context.model);
       break;
     default:
-      model = anthropicWithHelicone(DEFAULT_MODEL);
+      model = anthropic(DEFAULT_MODEL);
   }
 
   let result;
@@ -256,7 +250,7 @@ returns: string - appropriate name for this conversation
 */
 async function createConversationTitle(messages: CoreMessage[]) {
   const nonSystemMessages = messages.filter((msg) => msg.role !== "system");
-  const model = openaiWithHelicone(DEFAULT_NAMING_MODEL);
+  const model = openai(DEFAULT_NAMING_MODEL);
   const systemPrompt = NAMING_SYSTEM_PROMPT;
   const userPrompt = `
   Here are the messages from the conversation:
