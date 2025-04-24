@@ -17,6 +17,12 @@ import {
   LLMModel,
   SPECIAL_LLAMA_PROMPT,
 } from "@/lib/llm/types";
+import { 
+  openaiWithHelicone, 
+  anthropicWithHelicone, 
+  groqWithHelicone, 
+  googleWithHelicone 
+} from "@/lib/helicone";
 import { getRagieClient, getRagieSettingsByTenantId, getTenantRagieClient } from "@/lib/server/ragie";
 import {
   createConversationMessage,
@@ -89,23 +95,23 @@ export async function generate(tenantId: string, profileId: string, conversation
   let model;
   switch (provider) {
     case "openai":
-      model = openai(context.model);
+      model = openaiWithHelicone(context.model);
       break;
     case "google":
-      model = google(context.model);
+      model = googleWithHelicone(context.model);
       // google requires system messages to be ONLY in the beginning
       context.messages = [...systemMessages, ...nonSystemMessages];
       break;
     case "anthropic":
-      model = anthropic(context.model);
+      model = anthropicWithHelicone(context.model);
       // anthropic requires system messages to be ONLY in the beginning
       context.messages = [...systemMessages, ...nonSystemMessages];
       break;
     case "groq":
-      model = groq(context.model);
+      model = groqWithHelicone(context.model);
       break;
     default:
-      model = anthropic(DEFAULT_MODEL);
+      model = anthropicWithHelicone(DEFAULT_MODEL);
   }
 
   let result;
@@ -250,7 +256,7 @@ returns: string - appropriate name for this conversation
 */
 async function createConversationTitle(messages: CoreMessage[]) {
   const nonSystemMessages = messages.filter((msg) => msg.role !== "system");
-  const model = openai(DEFAULT_NAMING_MODEL);
+  const model = openaiWithHelicone(DEFAULT_NAMING_MODEL);
   const systemPrompt = NAMING_SYSTEM_PROMPT;
   const userPrompt = `
   Here are the messages from the conversation:
