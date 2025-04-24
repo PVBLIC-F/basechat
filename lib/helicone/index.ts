@@ -18,10 +18,12 @@ import { HELICONE_API_KEY } from "../server/settings";
  * @returns An OpenAI client configured with Helicone
  */
 export const openaiWithHelicone = (model: string) => {
-  return openai(model as any, {
-    baseURL: "https://oai.hconeai.com/v1",
-    defaultHeaders: {
-      "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`
+  return openai(model, {
+    configuration: {
+      baseURL: "https://oai.hconeai.com/v1",
+      defaultHeaders: {
+        "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`
+      }
     }
   });
 };
@@ -32,10 +34,12 @@ export const openaiWithHelicone = (model: string) => {
  * @returns An Anthropic client configured with Helicone
  */
 export const anthropicWithHelicone = (model: string) => {
-  return anthropic(model as any, {
-    baseURL: "https://anthropic.hconeai.com/v1",
-    defaultHeaders: {
-      "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`
+  return anthropic(model, {
+    configuration: {
+      baseURL: "https://anthropic.hconeai.com/v1",
+      defaultHeaders: {
+        "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`
+      }
     }
   });
 };
@@ -46,10 +50,12 @@ export const anthropicWithHelicone = (model: string) => {
  * @returns A Groq client configured with Helicone
  */
 export const groqWithHelicone = (model: string) => {
-  return groq(model as any, {
-    baseURL: "https://groq.hconeai.com/openai/v1",
-    defaultHeaders: {
-      "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`
+  return groq(model, {
+    configuration: {
+      baseURL: "https://groq.hconeai.com/openai/v1",
+      defaultHeaders: {
+        "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`
+      }
     }
   });
 };
@@ -60,10 +66,12 @@ export const groqWithHelicone = (model: string) => {
  * @returns A Google client configured with Helicone
  */
 export const googleWithHelicone = (model: string) => {
-  return google(model as any, {
-    baseURL: "https://gemini.hconeai.com/v1beta",
-    defaultHeaders: {
-      "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`
+  return google(model, {
+    configuration: {
+      baseURL: "https://gemini.hconeai.com/v1beta",
+      defaultHeaders: {
+        "Helicone-Auth": `Bearer ${HELICONE_API_KEY}`
+      }
     }
   });
 };
