@@ -6,32 +6,30 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { google } from "@ai-sdk/google";
 import { groq } from "@ai-sdk/groq";
 import { openai } from "@ai-sdk/openai";
-
 import { HELICONE_API_KEY } from "../server/settings";
 
 /**
  * Creates an OpenAI client with Helicone integration
  */
 export const openaiWithHelicone = (model: string) => {
-  // We need to cast the model to any to bypass the strict type checking
-  return openai(model as any, {
-    apiKey: process.env.OPENAI_API_KEY,
-    fetch: (url, options = {}) => {
-      // Modify the request to go through Helicone
-      const heliconeUrl = url.toString().replace(
-        "https://api.openai.com/v1",
-        "https://oai.helicone.ai/v1"
-      );
-      
-      // Add Helicone headers
-      const headers = new Headers(options.headers);
-      headers.set("Helicone-Auth", `Bearer ${HELICONE_API_KEY}`);
-      
-      return fetch(heliconeUrl, {
-        ...options,
-        headers
-      });
-    }
+  // Use a custom fetch implementation to route through Helicone
+  const customFetch = async (url: RequestInfo | URL, init?: RequestInit) => {
+    const heliconeUrl = url.toString().replace(
+      "https://api.openai.com/v1",
+      "https://oai.helicone.ai/v1"
+    );
+    
+    const headers = new Headers(init?.headers);
+    headers.set("Helicone-Auth", `Bearer ${HELICONE_API_KEY}`);
+    
+    return fetch(heliconeUrl, {
+      ...init,
+      headers
+    });
+  };
+
+  return openai(model as any, { 
+    customFetch 
   });
 };
 
@@ -39,24 +37,24 @@ export const openaiWithHelicone = (model: string) => {
  * Creates an Anthropic client with Helicone integration
  */
 export const anthropicWithHelicone = (model: string) => {
-  return anthropic(model as any, {
-    apiKey: process.env.ANTHROPIC_API_KEY,
-    fetch: (url, options = {}) => {
-      // Modify the request to go through Helicone
-      const heliconeUrl = url.toString().replace(
-        "https://api.anthropic.com",
-        "https://anthropic.helicone.ai"
-      );
-      
-      // Add Helicone headers
-      const headers = new Headers(options.headers);
-      headers.set("Helicone-Auth", `Bearer ${HELICONE_API_KEY}`);
-      
-      return fetch(heliconeUrl, {
-        ...options,
-        headers
-      });
-    }
+  // Use a custom fetch implementation to route through Helicone
+  const customFetch = async (url: RequestInfo | URL, init?: RequestInit) => {
+    const heliconeUrl = url.toString().replace(
+      "https://api.anthropic.com",
+      "https://anthropic.helicone.ai"
+    );
+    
+    const headers = new Headers(init?.headers);
+    headers.set("Helicone-Auth", `Bearer ${HELICONE_API_KEY}`);
+    
+    return fetch(heliconeUrl, {
+      ...init,
+      headers
+    });
+  };
+
+  return anthropic(model as any, { 
+    customFetch 
   });
 };
 
@@ -64,24 +62,24 @@ export const anthropicWithHelicone = (model: string) => {
  * Creates a Groq client with Helicone integration
  */
 export const groqWithHelicone = (model: string) => {
-  return groq(model as any, {
-    apiKey: process.env.GROQ_API_KEY,
-    fetch: (url, options = {}) => {
-      // Modify the request to go through Helicone
-      const heliconeUrl = url.toString().replace(
-        "https://api.groq.com/openai/v1",
-        "https://groq.helicone.ai/openai/v1"
-      );
-      
-      // Add Helicone headers
-      const headers = new Headers(options.headers);
-      headers.set("Helicone-Auth", `Bearer ${HELICONE_API_KEY}`);
-      
-      return fetch(heliconeUrl, {
-        ...options,
-        headers
-      });
-    }
+  // Use a custom fetch implementation to route through Helicone
+  const customFetch = async (url: RequestInfo | URL, init?: RequestInit) => {
+    const heliconeUrl = url.toString().replace(
+      "https://api.groq.com/openai/v1",
+      "https://groq.helicone.ai/openai/v1"
+    );
+    
+    const headers = new Headers(init?.headers);
+    headers.set("Helicone-Auth", `Bearer ${HELICONE_API_KEY}`);
+    
+    return fetch(heliconeUrl, {
+      ...init,
+      headers
+    });
+  };
+
+  return groq(model as any, { 
+    customFetch 
   });
 };
 
@@ -89,18 +87,25 @@ export const groqWithHelicone = (model: string) => {
  * Creates a Google client with Helicone integration
  */
 export const googleWithHelicone = (model: string) => {
-  return google(model as any, {
-    apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-    fetch: (url, options = {}) => {
-      // Add Helicone headers
-      const headers = new Headers(options.headers);
-      headers.set("Helicone-Auth", `Bearer ${HELICONE_API_KEY}`);
-      headers.set("Helicone-Target-URL", "https://generativelanguage.googleapis.com");
-      
-      return fetch("https://gateway.helicone.ai" + url.toString().replace("https://generativelanguage.googleapis.com", ""), {
-        ...options,
-        headers
-      });
-    }
+  // Use a custom fetch implementation to route through Helicone
+  const customFetch = async (url: RequestInfo | URL, init?: RequestInit) => {
+    const targetUrl = url.toString();
+    const heliconeUrl = "https://gateway.helicone.ai" + targetUrl.replace(
+      "https://generativelanguage.googleapis.com", 
+      ""
+    );
+    
+    const headers = new Headers(init?.headers);
+    headers.set("Helicone-Auth", `Bearer ${HELICONE_API_KEY}`);
+    headers.set("Helicone-Target-URL", "https://generativelanguage.googleapis.com");
+    
+    return fetch(heliconeUrl, {
+      ...init,
+      headers
+    });
+  };
+
+  return google(model as any, { 
+    customFetch 
   });
 };
