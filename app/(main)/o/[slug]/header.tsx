@@ -9,6 +9,7 @@ import { z } from "zod";
 
 import Logo from "@/components/tenant/logo/logo";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { tenantListResponseSchema, updateCurrentProfileSchema } from "@/lib/api";
 import { signOut } from "@/lib/auth-client";
 import { getSignInPath, getSignUpPath, getTenantPath } from "@/lib/paths";
@@ -177,17 +178,28 @@ export default function Header({ isAnonymous, tenant, name, email, onNavClick = 
                       </div>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Image
-                            src={EllipsesIcon}
-                            height={16}
-                            width={16}
-                            alt="Options"
-                            className={cn(
-                              "flex-shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity",
-                              tenantItem.lastAdmin && "opacity-0 cursor-not-allowed",
-                            )}
-                            onClick={(e) => e.stopPropagation()}
-                          />
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Image
+                                  src={EllipsesIcon}
+                                  height={16}
+                                  width={16}
+                                  alt="Options"
+                                  className={cn(
+                                    "flex-shrink-0 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity",
+                                    tenantItem.lastAdmin && "opacity-0 cursor-not-allowed",
+                                  )}
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                              </TooltipTrigger>
+                              {tenantItem.lastAdmin && (
+                                <TooltipContent className="max-w-[200px] whitespace-normal">
+                                  <p>You are the sole admin for this chatbot and cannot leave it.</p>
+                                </TooltipContent>
+                              )}
+                            </Tooltip>
+                          </TooltipProvider>
                         </PopoverTrigger>
                         {!tenantItem.lastAdmin && (
                           <TenantPopoverContent>
