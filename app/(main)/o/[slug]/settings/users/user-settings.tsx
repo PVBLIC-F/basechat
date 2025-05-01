@@ -270,63 +270,65 @@ export default function UserSettings({ members: initialMembers, tenant }: Props)
             </div>
           )}
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="font-semibold text-[13px] text-[#74747A] pl-0">Name</TableHead>
-              <TableHead className="font-semibold text-[13px] text-[#74747A] w-[92px]">Role</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {members.map((member, i) => (
-              <TableRow key={i}>
-                <TableCell className="flex items-center pl-0">
-                  {member.type === "profile" ? (
-                    <>
-                      <div className="mr-2">{member.name}</div>
-                      <div className="text-[#74747A]">{member.email}</div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="mr-2">{member.email}</div>
-                      <div className="text-[#74747A] rounded border-[#D7D7D7] border py-1 px-2">Pending</div>
-                    </>
-                  )}
-                </TableCell>
-                <TableCell className="capitalize w-[100px]">
-                  <Select
-                    onValueChange={(newRole) => handleRoleChange(member.id, member.type, newRole as MemberRole)}
-                    defaultValue={member.role}
-                  >
-                    <SelectTrigger className="border-none">
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {roleItems.map((option, i) => (
-                        <RoleSelectItem key={i} item={option} />
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button>
-                        <MoreHorizontal />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onSelect={() => handleDelete(member.id, member.type, member.role)}>
-                        <Trash />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+        <div className="max-h-[calc(100vh-300px)] overflow-y-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-semibold text-[13px] text-[#74747A] pl-0">Name</TableHead>
+                <TableHead className="font-semibold text-[13px] text-[#74747A] w-[92px]">Role</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {members.map((member, i) => (
+                <TableRow key={i}>
+                  <TableCell className="flex items-center pl-0">
+                    {member.type === "profile" ? (
+                      <>
+                        <div className="mr-2">{member.name}</div>
+                        <div className="text-[#74747A]">{member.email}</div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="mr-2">{member.email}</div>
+                        <div className="text-[#74747A] rounded border-[#D7D7D7] border py-1 px-2">Pending</div>
+                      </>
+                    )}
+                  </TableCell>
+                  <TableCell className="capitalize w-[100px]">
+                    <Select
+                      onValueChange={(newRole) => handleRoleChange(member.id, member.type, newRole as MemberRole)}
+                      defaultValue={member.role}
+                    >
+                      <SelectTrigger className="border-none">
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {roleItems.map((option, i) => (
+                          <RoleSelectItem key={i} item={option} />
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button>
+                          <MoreHorizontal />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onSelect={() => handleDelete(member.id, member.type, member.role)}>
+                          <Trash />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );

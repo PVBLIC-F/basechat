@@ -489,13 +489,6 @@ async function updateConversationTimestamp(tenantId: string, conversationId: str
     .where(and(eq(schema.conversations.tenantId, tenantId), eq(schema.conversations.id, conversationId)));
 }
 
-export async function updateConversationTitle(tenantId: string, conversationId: string, title: string) {
-  return await db
-    .update(schema.conversations)
-    .set({ title })
-    .where(and(eq(schema.conversations.tenantId, tenantId), eq(schema.conversations.id, conversationId)));
-}
-
 export async function createConversationMessage(message: typeof schema.messages.$inferInsert) {
   const rs = await db
     .insert(schema.messages)

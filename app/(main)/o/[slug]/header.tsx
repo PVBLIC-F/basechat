@@ -53,7 +53,7 @@ const HeaderPopoverContent = ({
 }) => (
   <PopoverContent
     align={align}
-    className={cn("bg-[#F5F5F7] w-[258px] border-none shadow-none rounded-[24px] p-6", className)}
+    className={cn("bg-[#F5F5F7] w-[258px] border-none shadow-none rounded-[24px] py-6 px-2", className)}
   >
     {children}
   </PopoverContent>
