@@ -149,11 +149,12 @@ export async function getRetrievalSystemPrompt(
   prioritizeRecent: boolean,
 ) {
   const { client, partition } = await getRagieClientAndPartition(tenant.id);
+  const topK = isBreadth || rerankEnabled ? 100 : 6;
 
-  const response = await client.retrievals.retrieve({
+  let response = await client.retrievals.retrieve({
     partition,
     query,
-    topK: isBreadth ? 32 : 6,
+    topK,
     rerank: rerankEnabled,
     recencyBias: prioritizeRecent,
     ...(isBreadth ? { maxChunksPerDocument: 4 } : {}),
@@ -161,12 +162,31 @@ export async function getRetrievalSystemPrompt(
 
   console.log(`ragie response includes ${response.scoredChunks.length} chunk(s)`);
 
+  if (response.scoredChunks.length === 0 && rerankEnabled) {
+    console.log("No chunks found, trying again with rerank disabled");
+
+    response = await client.retrievals.retrieve({
+      partition,
+      query,
+      topK: isBreadth ? 100 : 6,
+      rerank: false,
+      recencyBias: prioritizeRecent,
+      ...(isBreadth ? { maxChunksPerDocument: 4 } : {}),
+    });
+
+    console.log(`ragie response (rereank fallback) includes ${response.scoredChunks.length} chunk(s)`);
+  }
+
   const chunks = JSON.stringify(response);
 
   const sources = response.scoredChunks.map((chunk) => ({
     ...chunk.documentMetadata,
     documentId: chunk.documentId,
     documentName: chunk.documentName,
+    streamUrl: chunk.links.self_audio_stream?.href,
+    downloadUrl: chunk.links.self_audio_download?.href,
+    startTime: chunk.metadata?.start_time,
+    endTime: chunk.metadata?.end_time,
   }));
 
   const company = { name: tenant.name };

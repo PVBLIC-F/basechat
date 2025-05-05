@@ -42,10 +42,10 @@ interface Props {
     overridePrioritizeRecent: boolean | null;
   };
   initMessage?: string;
-  onSelectedDocumentId: (id: string) => void;
+  onSelectedSource: (source: SourceMetadata) => void;
 }
 
-export default function Chatbot({ tenant, conversationId, initMessage, onSelectedDocumentId }: Props) {
+export default function Chatbot({ tenant, conversationId, initMessage, onSelectedSource }: Props) {
   const [localInitMessage, setLocalInitMessage] = useState(initMessage);
   const [messages, setMessages] = useState<Message[]>([]);
   const [sourceCache, setSourceCache] = useState<Record<string, SourceMetadata[]>>({});
@@ -225,6 +225,7 @@ export default function Chatbot({ tenant, conversationId, initMessage, onSelecte
       if (!res.ok) return;
 
       const json = (await res.json()) as { id: string; sources: SourceMetadata[] };
+      console.log("sources", json.sources);
       setSourceCache((prev) => ({ ...prev, [json.id]: json.sources }));
     })();
   }, [conversationId, pendingMessage, tenant.slug]);
@@ -278,7 +279,7 @@ export default function Chatbot({ tenant, conversationId, initMessage, onSelecte
                   content={message.content}
                   id={message.id}
                   sources={message.sources}
-                  onSelectedDocumentId={onSelectedDocumentId}
+                  onSelectedSource={onSelectedSource}
                   model={message.model || selectedModel}
                   isGenerating={false}
                   tenantId={tenant.id}
@@ -293,7 +294,7 @@ export default function Chatbot({ tenant, conversationId, initMessage, onSelecte
               content={object?.message}
               id={pendingMessage?.id}
               sources={[]}
-              onSelectedDocumentId={onSelectedDocumentId}
+              onSelectedSource={onSelectedSource}
               model={pendingMessage?.model || selectedModel}
               isGenerating
               tenantId={tenant.id}

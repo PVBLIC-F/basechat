@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useGlobalState } from "@/app/(main)/o/[slug]/context";
 import Chatbot from "@/components/chatbot";
+import { SourceMetadata } from "@/components/chatbot/types";
 import { LLMModel } from "@/lib/llm/types";
 
 import Summary from "./summary";
@@ -27,7 +28,7 @@ interface Props {
 }
 
 export default function Conversation({ id, tenant }: Props) {
-  const [documentId, setDocumentId] = useState<string | null>(null);
+  const [source, setSource] = useState<SourceMetadata | null>(null);
   const { initialMessage, setInitialMessage, initialModel, setInitialModel } = useGlobalState();
 
   // Move the default model logic outside useEffect
@@ -46,8 +47,8 @@ export default function Conversation({ id, tenant }: Props) {
     setInitialMessage("");
   }, [setInitialMessage]);
 
-  const handleSelectedDocumentId = async (id: string) => {
-    setDocumentId(id);
+  const handleSelectedSource = async (source: SourceMetadata) => {
+    setSource(source);
   };
 
   return (
@@ -56,15 +57,15 @@ export default function Conversation({ id, tenant }: Props) {
         tenant={tenant}
         conversationId={id}
         initMessage={initialMessage}
-        onSelectedDocumentId={handleSelectedDocumentId}
+        onSelectedSource={handleSelectedSource}
       />
-      {documentId && (
+      {source && (
         <div className="absolute top-0 left-0 right-0 lg:static lg:h-full">
           <Summary
             className="flex-1 w-full lg:min-w-[400px] lg:w-[400px] rounded-[24px] p-8 mr-6 mb-4 bg-[#F5F5F7] max-h-[calc(100vh-155px)] overflow-y-auto"
-            documentId={documentId}
+            source={source}
             slug={tenant.slug}
-            onCloseClick={() => setDocumentId(null)}
+            onCloseClick={() => setSource(null)}
           />
         </div>
       )}
