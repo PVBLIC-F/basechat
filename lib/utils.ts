@@ -39,3 +39,19 @@ export function getAvatarNumber(tenantId: string, max: number = 3): number {
   // Use the hash to get a number between 1 and max
   return Math.abs(hash % max) + 1;
 }
+
+export function getStatusDisplayName(status: string): string {
+  const statusMap: Record<string, string> = {
+    pending: "Partitioning",
+    partitioning: "Partitioning",
+    partitioned: "Refining",
+    refined: "Chunking",
+    chunked: "Indexing",
+    summary_indexed: "Indexing",
+    keyword_indexed: "Indexing",
+    ready: "Ready",
+    failed: "Sync error",
+  };
+
+  return statusMap[status] || "Syncing";
+}

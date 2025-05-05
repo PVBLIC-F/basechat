@@ -23,13 +23,29 @@ export default function Summary({ className, documentId, slug, onCloseClick = ()
 
   useEffect(() => {
     (async () => {
-      const res = await fetch(`/api/documents/${documentId}`, {
-        headers: { tenant: slug },
-      });
-      if (!res.ok) throw new Error("could not retrieve summary");
+      try {
+        const res = await fetch(`/api/documents/${documentId}`, {
+          headers: { tenant: slug },
+        });
 
-      const json = (await res.json()) as DocumentResponse;
-      setDocument(json);
+        if (!res.ok) {
+          setDocument({
+            name: "Document",
+            metadata: {
+              source_type: "unknown",
+              source_url: "#",
+            },
+            updatedAt: new Date().toISOString(),
+            summary: "Document summary not available",
+          });
+          throw new Error("could not retrieve document with summary");
+        }
+
+        const json = (await res.json()) as DocumentResponse;
+        setDocument(json);
+      } catch (error) {
+        console.error("Error fetching document:", error);
+      }
     })();
   }, [documentId, slug]);
 

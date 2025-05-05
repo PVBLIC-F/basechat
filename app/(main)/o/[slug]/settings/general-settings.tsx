@@ -349,7 +349,7 @@ export default function GeneralSettings({ tenant, canUploadLogo }: Props) {
           "mb-8": !canUploadLogo,
         })}
       >
-        <h1 className="font-bold text-[32px]">Settings</h1>
+        <h1 className="font-bold text-[32px] text-[#343A40]">Settings</h1>
         <div className="flex justify-end">
           <button
             type="reset"
@@ -373,7 +373,7 @@ export default function GeneralSettings({ tenant, canUploadLogo }: Props) {
       {canUploadLogo && (
         <div>
           <div className="mb-2">
-            <Label className="font-semibold text-base">Avatar</Label>
+            <Label className="font-semibold text-base text-[#343A40]">Avatar</Label>
           </div>
           <LogoChanger tenant={tenant} />
           <hr className="w-full my-8" />
@@ -395,7 +395,7 @@ export default function GeneralSettings({ tenant, canUploadLogo }: Props) {
 
             <hr className="w-full my-8" />
 
-            <h3 className="font-semibold text-base">Example questions to help your users get started</h3>
+            <h3 className="font-semibold text-base text-[#343A40]">Example questions to help your users get started</h3>
 
             <QuestionField form={form} name="question1" label="Question 1" />
             <QuestionField form={form} name="question2" label="Question 2" />

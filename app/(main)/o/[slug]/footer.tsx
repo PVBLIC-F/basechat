@@ -62,7 +62,7 @@ export default function Footer({ className, tenant }: Props) {
           <NavButton alt="Chat" src={chatIcon} className={chatClassName} />
         </Link>
         <Link href={getDataPath(tenant.slug)}>
-          <NavButton alt="My Data" src={dataIcon} className={dataClassName} />
+          <NavButton alt="Data" src={dataIcon} className={dataClassName} />
         </Link>
         <Link href={getSettingsPath(tenant.slug)}>
           <NavButton alt="Settings" src={settingsIcon} className={settingsClassName} />

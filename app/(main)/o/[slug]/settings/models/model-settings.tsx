@@ -87,7 +87,7 @@ const ModelsField = (form: UseFormReturn<FormValues>) => {
       render={({ field }) => (
         <FormItem className="flex flex-col">
           <div className="mb-5">
-            <FormLabel className="font-semibold text-base">Models</FormLabel>
+            <FormLabel className="font-semibold text-base text-[#343A40]">Models</FormLabel>
             <p className="text-sm text-muted-foreground">Choose which models can be used by this chatbot</p>
           </div>
           <div className="space-y-5 pl-8">
@@ -385,7 +385,7 @@ export default function ModelSettings({ tenant }: Props) {
   return (
     <div className="w-full p-4 flex-grow flex flex-col relative">
       <div className="flex w-full justify-between items-center mb-16">
-        <h1 className="font-bold text-[32px]">Models</h1>
+        <h1 className="font-bold text-[32px] text-[#343A40]">Models</h1>
         <div className="flex justify-end">
           <button
             type="reset"

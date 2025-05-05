@@ -35,8 +35,8 @@ export default function AddConnectionMenu({ tenant }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center rounded-[40px] h-[40px] px-5 bg-[#F5F5F7] border border-[#D7D7D7] font-semibold">
-          <div className="mr-2">Add Data</div>
+        <button className="flex items-center rounded-[40px] h-[40px] px-5 bg-[#FFFFFF] border border-[#D7D7D7] font-semibold hover:bg-[#F5F5F7] data-[state=open]:bg-[#F5F5F7]">
+          <div className="mr-2">Add Connection</div>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <mask
               id="mask0_217_2334"

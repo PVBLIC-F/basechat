@@ -1,3 +1,5 @@
+import assert from "assert";
+
 import { eq } from "drizzle-orm";
 import { Ragie } from "ragie";
 
@@ -37,4 +39,22 @@ export async function getRagieSettingsByTenantId(tenantId: string) {
   }
 
   return tenant;
+}
+
+export async function getRagieClientAndPartition(tenantId: string) {
+  const { ragieApiKey, ragiePartition } = await getRagieSettingsByTenantId(tenantId);
+
+  let client;
+  let partition;
+  if (ragieApiKey) {
+    client = await getTenantRagieClient(ragieApiKey);
+    partition = ragiePartition || undefined;
+  } else {
+    client = getRagieClient();
+    partition = tenantId;
+  }
+
+  assert(!!client, "No client found");
+
+  return { client, partition };
 }

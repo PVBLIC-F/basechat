@@ -7,7 +7,7 @@ import { DEFAULT_MODEL, DEFAULT_PROVIDER, getProviderForModel } from "@/lib/llm/
 import { createConversationMessage, getConversation, getConversationMessages } from "@/lib/server/service";
 import { requireAuthContextFromRequest } from "@/lib/server/utils";
 
-import { generate, getGroundingSystemPrompt, getRetrievalSystemPrompt, FAILED_MESSAGE_CONTENT } from "./utils";
+import { generate, renderGroundingSystemPrompt, getRetrievalSystemPrompt, FAILED_MESSAGE_CONTENT } from "./utils";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) {
   const { profile, tenant } = await requireAuthContextFromRequest(request);
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       tenantId: tenant.id,
       conversationId: conversation.id,
       role: "system",
-      content: getGroundingSystemPrompt(
+      content: renderGroundingSystemPrompt(
         {
           company: {
             name: tenant.name,
@@ -72,8 +72,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   let sources: { documentId: string; documentName: string }[] = [];
 
   const { content: systemMessageContent, sources: ragSources } = await getRetrievalSystemPrompt(
-    tenant.id,
-    tenant.name,
+    tenant,
     content,
     isBreadth,
     rerankEnabled,

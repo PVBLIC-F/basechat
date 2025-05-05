@@ -1,16 +1,18 @@
-import { formatDistanceToNow } from "date-fns";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import CONNECTOR_MAP from "@/lib/connector-map";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import db from "@/lib/server/db";
 import * as schema from "@/lib/server/db/schema";
+import { getRagieClientAndPartition } from "@/lib/server/ragie";
 import { adminOrRedirect } from "@/lib/server/utils";
 import ManageDataPreviewIcons from "@/public/manage-data-preview-icons.svg";
 
 import AddConnectionMenu from "./add-connection-menu";
-import ManageConnectionMenu from "./manage-connection-menu";
+import ConnectionsTable from "./connections-table";
+import FileDropzone from "./file-dropzone";
+import FilesTable from "./files-table";
+import UploadFileButton from "./upload-file-button";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -21,58 +23,62 @@ export default async function DataIndexPage({ params }: Props) {
   const { tenant } = await adminOrRedirect(p.slug);
   const connections = await db.select().from(schema.connections).where(eq(schema.connections.tenantId, tenant.id));
 
+  let files: any[] = [];
+  try {
+    const { client, partition } = await getRagieClientAndPartition(tenant.id);
+    const res = await client.documents.list({
+      partition: partition || "",
+    });
+    files = res.result.documents;
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+  }
+
   return (
-    <div className="max-w-[1140px] w-full p-4 flex-grow flex flex-col">
+    <div className="max-w-[1140px] w-full p-4 flex flex-col h-full">
       <div className="flex w-full justify-between items-center pt-2">
-        <h1 className="font-bold text-[32px]">Manage data</h1>
-        <AddConnectionMenu tenant={tenant} />
+        <h1 className="font-bold text-[32px] text-[#343A40]">Chatbot data</h1>
+        <div className="flex gap-2">
+          <UploadFileButton tenant={tenant} />
+          <AddConnectionMenu tenant={tenant} />
+        </div>
       </div>
-      <>
-        {connections.length > 0 ? (
-          <div className="flex-grow w-full flex flex-col items-center mt-10">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="w-[200px]">Date added</TableHead>
-                  <TableHead className="w-[200px]">Last synced</TableHead>
-                  <TableHead className="w-[50px]">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {connections.map((connection) => (
-                  <TableRow key={connection.id}>
-                    <TableCell className="font-medium flex items-center">
-                      <Image
-                        src={CONNECTOR_MAP[connection.sourceType][1]}
-                        alt={CONNECTOR_MAP[connection.sourceType][0]}
-                        className="mr-1"
-                      />
-                      <div>{connection.name}</div>
-                    </TableCell>
-                    <TableCell>{formatDistanceToNow(connection.createdAt, { addSuffix: true })}</TableCell>
-                    <TableCell>
-                      {connection.lastSyncedAt
-                        ? formatDistanceToNow(connection.lastSyncedAt, { addSuffix: true })
-                        : "-"}
-                    </TableCell>
-                    <TableCell>{connection.status}</TableCell>
-                    <TableCell className="text-right">
-                      <ManageConnectionMenu id={connection.id} tenant={tenant} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        ) : (
-          <div className="flex-grow w-full flex flex-col items-center justify-center">
-            <Image alt="Manage data" src={ManageDataPreviewIcons} />
-            <h1 className="font-bold text-[32px] mb-3">Chat with your own data</h1>
-            <div className="text-[16px]">Click ‘Add data’ above to get started</div>
-          </div>
-        )}
-      </>
+      <Tabs defaultValue="files" className="flex flex-col h-full mt-8">
+        <TabsList className="w-full justify-start bg-transparent gap-2">
+          <TabsTrigger
+            value="files"
+            className="text-sm font-medium text-[#1D1D1F] data-[state=active]:bg-[#27272A] data-[state=active]:text-white data-[state=active]:rounded-[32px] data-[state=active]:w-[55px] data-[state=active]:h-[36px] data-[state=active]:py-[8px] data-[state=active]:px-[12px]"
+          >
+            Files
+          </TabsTrigger>
+          <TabsTrigger
+            value="connections"
+            className="text-sm font-medium text-[#1D1D1F] data-[state=active]:bg-[#27272A] data-[state=active]:text-white data-[state=active]:rounded-[32px] data-[state=active]:w-[109px] data-[state=active]:h-[36px] data-[state=active]:py-[8px] data-[state=active]:px-[12px]"
+          >
+            Connections
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="files" className="flex-1 overflow-hidden">
+          {files.length > 0 ? (
+            <FilesTable tenant={tenant} initialFiles={files} />
+          ) : (
+            <div className="flex-grow w-full flex flex-col items-center justify-center h-[calc(100vh-400px)]">
+              <FileDropzone tenant={tenant} />
+            </div>
+          )}
+        </TabsContent>
+        <TabsContent value="connections" className="flex-1 overflow-hidden">
+          {connections.length > 0 ? (
+            <ConnectionsTable tenant={tenant} connections={connections} />
+          ) : (
+            <div className="flex-grow w-full flex flex-col items-center justify-center h-[calc(100vh-400px)]">
+              <Image alt="Manage data" src={ManageDataPreviewIcons} />
+              <h1 className="font-bold text-[32px] mb-3">Add a connection</h1>
+              <div className="text-[16px]">Click &apos;Add Connection&apos; above to get started</div>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

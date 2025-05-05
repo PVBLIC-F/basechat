@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { ConnectorSource } from "ragie/models/components";
 
-import { getRagieClient } from "@/lib/server/ragie";
+import { getRagieClientAndPartition } from "@/lib/server/ragie";
 import * as settings from "@/lib/server/settings";
 import { requireAdminContextFromRequest } from "@/lib/server/utils";
 
@@ -14,7 +14,7 @@ interface Params {
 export async function GET(request: NextRequest, { params }: { params: Promise<Params> }) {
   const { tenant } = await requireAdminContextFromRequest(request);
 
-  const client = getRagieClient();
+  const { client, partition } = await getRagieClientAndPartition(tenant.id);
   const { type } = await params;
 
   const redirectUri = new URL("/api/ragie/callback", settings.BASE_URL!);
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<Pa
   const payload = await client.connections.createOAuthRedirectUrl({
     redirectUri: redirectUri.toString(),
     sourceType: type as ConnectorSource | undefined,
-    partition: tenant.id,
+    partition,
     mode: "hi_res",
     theme: "light",
   });

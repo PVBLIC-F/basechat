@@ -14,7 +14,7 @@ import { InviteHtml, ResetPasswordHtml } from "../mail";
 
 import db from "./db";
 import * as schema from "./db/schema";
-import { getRagieClient } from "./ragie";
+import { getRagieClientAndPartition } from "./ragie";
 
 type Role = (typeof schema.rolesEnum.enumValues)[number];
 
@@ -94,7 +94,8 @@ export async function deleteConnection(tenantId: string, id: string) {
       .where(and(eq(schema.connections.tenantId, tenantId), eq(schema.connections.id, connection.id)));
 
     try {
-      await getRagieClient().connections.delete({
+      const { client } = await getRagieClientAndPartition(tenantId);
+      await client.connections.delete({
         connectionId: connection.ragieConnectionId,
         deleteConnectionPayload: { keepFiles: false },
       });
@@ -116,7 +117,8 @@ export async function saveConnection(tenantId: string, ragieConnectionId: string
   const lastSyncedAt = status === "ready" ? new Date() : null;
 
   if (!connection) {
-    const ragieConnection = await getRagieClient().connections.get({ connectionId: ragieConnectionId });
+    const { client } = await getRagieClientAndPartition(tenantId);
+    const ragieConnection = await client.connections.get({ connectionId: ragieConnectionId });
     await db.insert(schema.connections).values({
       tenantId: tenantId,
       ragieConnectionId,

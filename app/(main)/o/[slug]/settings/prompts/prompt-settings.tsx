@@ -64,7 +64,7 @@ const TextAreaField = ({ form, name, label, className, help, hasDefault, descrip
       name={name}
       render={({ field }) => (
         <FormItem className={cn("flex flex-col", className)}>
-          <FormLabel className="font-semibold text-base mb-1 flex items-center justify-between">
+          <FormLabel className="font-semibold text-base mb-1 flex items-center justify-between text-[#343A40]">
             <div className="flex items-center gap-2">
               {label} {help}
             </div>
@@ -156,7 +156,7 @@ export default function PromptSettings({ tenant }: Props) {
   return (
     <div className="w-full p-4 flex-grow flex flex-col relative">
       <div className="flex w-full justify-between items-center mb-16">
-        <h1 className="font-bold text-[32px]">Prompts</h1>
+        <h1 className="font-bold text-[32px] text-[#343A40]">Prompts</h1>
         <div className="flex justify-end">
           <button
             type="reset"

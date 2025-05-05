@@ -195,7 +195,7 @@ export default function UserSettings({ members: initialMembers, tenant }: Props)
   return (
     <div className="w-full p-4 flex-grow flex flex-col">
       <div className="flex w-full justify-between items-center pt-2">
-        <h1 className="font-bold text-[32px]">Users</h1>
+        <h1 className="font-bold text-[32px] text-[#343A40]">Users</h1>
         <div className="flex">
           <div className="flex flex-col justify-end">
             <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
