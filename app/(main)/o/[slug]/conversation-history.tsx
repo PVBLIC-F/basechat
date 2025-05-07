@@ -185,9 +185,9 @@ export default function ConversationHistory({ className, tenant }: Props) {
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
           ) : isError ? (
-            <div className="mt-4 text-gray-500">Failed to load conversations.</div>
+            <div className="mt-4 text-gray-500 pl-3">Failed to load conversations.</div>
           ) : allConversations.length === 0 ? (
-            <div className="mt-4 text-gray-500">No chat history yet.</div>
+            <div className="mt-4 text-gray-500 pl-3">No chat history yet.</div>
           ) : (
             <div className="space-y-4">
               {/* Today's conversations */}
@@ -368,7 +368,7 @@ export default function ConversationHistory({ className, tenant }: Props) {
                 ))}
 
               {/* Load more trigger */}
-              <div ref={loadMoreRef} className="h-4">
+              <div ref={loadMoreRef}>
                 {isFetchingNextPage && (
                   <div className="flex justify-center items-center">
                     <Loader2 className="h-4 w-4 animate-spin" />

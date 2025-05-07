@@ -20,16 +20,28 @@ interface Props {
 
 export default async function DataIndexPage({ params }: Props) {
   const p = await params;
-  const { tenant } = await adminOrRedirect(p.slug);
+  const { tenant, session } = await adminOrRedirect(p.slug);
   const connections = await db.select().from(schema.connections).where(eq(schema.connections.tenantId, tenant.id));
 
+  // Create a map of source types to connections for quick lookup
+  const connectionMap = connections.reduce(
+    (acc, connection) => {
+      acc[connection.sourceType] = connection;
+      return acc;
+    },
+    {} as Record<string, (typeof connections)[0]>,
+  );
+
   let files: any[] = [];
+  let nextCursor: string | null = null;
   try {
     const { client, partition } = await getRagieClientAndPartition(tenant.id);
     const res = await client.documents.list({
       partition: partition || "",
+      pageSize: 12,
     });
     files = res.result.documents;
+    nextCursor = res.result.pagination.nextCursor || null;
   } catch (error) {
     console.error("Error fetching documents:", error);
   }
@@ -39,7 +51,7 @@ export default async function DataIndexPage({ params }: Props) {
       <div className="flex w-full justify-between items-center pt-2">
         <h1 className="font-bold text-[32px] text-[#343A40]">Chatbot data</h1>
         <div className="flex gap-2">
-          <UploadFileButton tenant={tenant} />
+          <UploadFileButton tenant={tenant} userName={session.user.name} />
           <AddConnectionMenu tenant={tenant} />
         </div>
       </div>
@@ -60,10 +72,16 @@ export default async function DataIndexPage({ params }: Props) {
         </TabsList>
         <TabsContent value="files" className="flex-1 overflow-hidden">
           {files.length > 0 ? (
-            <FilesTable tenant={tenant} initialFiles={files} />
+            <FilesTable
+              tenant={tenant}
+              initialFiles={files}
+              nextCursor={nextCursor}
+              userName={session.user.name}
+              connectionMap={connectionMap}
+            />
           ) : (
             <div className="flex-grow w-full flex flex-col items-center justify-center h-[calc(100vh-400px)]">
-              <FileDropzone tenant={tenant} />
+              <FileDropzone tenant={tenant} userName={session.user.name} />
             </div>
           )}
         </TabsContent>

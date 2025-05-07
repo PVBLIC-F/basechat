@@ -18,9 +18,10 @@ interface Props {
     slug: string;
   };
   isConnectorFile: boolean;
+  onFileRemoved: (fileId: string) => void;
 }
 
-export default function ManageFileMenu({ id, tenant, isConnectorFile }: Props) {
+export default function ManageFileMenu({ id, tenant, isConnectorFile, onFileRemoved }: Props) {
   const router = useRouter();
 
   async function deleteFile() {
@@ -42,6 +43,7 @@ export default function ManageFileMenu({ id, tenant, isConnectorFile }: Props) {
       toast.success("File deleted successfully", {
         id: toastId,
       });
+      onFileRemoved(id);
       router.refresh();
     } catch (error) {
       toast.error("Failed to delete file", {
